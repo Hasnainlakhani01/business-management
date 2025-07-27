@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% from "macros.html" import currency %}
+
+{% block title %}Dashboard - Business Manager{% endblock %}
+
+{% block content %}
+<h1>Dashboard</h1>
+
+<div class="row mb-4">
+    <!-- Supplier Stats -->
+    <div class="col-md-3">
+        <div class="card text-white bg-primary position-relative">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-truck"></i> Suppliers</h5>
+                {% if supplier_stats %}
+                <p class="card-text">
+                    Total: {{ supplier_stats.total_suppliers }}<br>
+                    Payable: {{ currency(supplier_stats.total_payable) }}
+                </p>
+                {% endif %}
+                <a href="{{ url_for('suppliers') }}" class="stretched-link text-white" title="View all suppliers"></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Stats -->
+    <div class="col-md-3">
+        <div class="card text-white bg-success position-relative">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-person"></i> Customers</h5>
+                {% if customer_stats %}
+                <p class="card-text">
+                    Total: {{ customer_stats.total_customers }}<br>
+                    Receivable: {{ currency(customer_stats.total_receivable) }}
+                </p>
+                {% endif %}
+                <a href="{{ url_for('customers') }}" class="stretched-link text-white" title="View all customers"></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Stats -->
+    <div class="col-md-3">
+        <div class="card text-white bg-warning position-relative">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-bag-check"></i> Purchases</h5>
+                {% if purchase_stats %}
+                <p class="card-text">
+                    Total: {{ purchase_stats.total_purchases }}<br>
+                    Outstanding: {{ currency(purchase_stats.total_outstanding) }}
+                </p>
+                {% endif %}
+                <a href="{{ url_for('purchases') }}" class="stretched-link text-white" title="View all purchases"></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sale Stats -->
+    <div class="col-md-3">
+        <div class="card text-white bg-info position-relative">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-cart"></i> Sales</h5>
+                {% if sale_stats %}
+                <p class="card-text">
+                    Total: {{ sale_stats.total_sales }}<br>
+                    Outstanding: {{ currency(sale_stats.total_outstanding) }}
+                </p>
+                {% endif %}
+                <a href="{{ url_for('sales') }}" class="stretched-link text-white" title="View all sales"></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Outstanding Purchases -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Outstanding Purchases</h5>
+            </div>
+            <div class="card-body">
+                {% if outstanding_purchases %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Supplier</th>
+                                <th>Bill No</th>
+                                <th class="text-end">Outstanding</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for purchase in outstanding_purchases %}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('edit_supplier', supplier_id=purchase.supplier_id) }}">
+                                        {{ purchase.supplier_name }}
+                                    </a>
+                                </td>
+                                <td>{{ purchase.bill_no or 'N/A' }}</td>
+                                <td class="text-end">{{ currency(purchase.outstanding) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No outstanding purchases</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Outstanding Sales -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Outstanding Sales</h5>
+            </div>
+            <div class="card-body">
+                {% if outstanding_sales %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Invoice No</th>
+                                <th class="text-end">Outstanding</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sale in outstanding_sales %}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('edit_customer', customer_id=sale.customer_id) }}">
+                                        {{ sale.customer_name }}
+                                    </a>
+                                </td>
+                                <td>{{ sale.invoice_no or 'N/A' }}</td>
+                                <td class="text-end">{{ currency(sale.outstanding) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No outstanding sales</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

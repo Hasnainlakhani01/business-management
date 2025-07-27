@@ -1,0 +1,3 @@
+{% macro currency(amount) %}
+    ${{ "%.2f"|format(amount) }}
+{% endmacro %}

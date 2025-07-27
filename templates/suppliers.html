@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Suppliers - Business Manager{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Suppliers</h1>
+    <a href="{{ url_for('new_supplier') }}" class="btn btn-primary">Add New Supplier</a>
+</div>
+
+{% if suppliers %}
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Contact</th>
+                <th>Balance</th>
+                <th>Total Purchases</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for supplier in suppliers %}
+            <tr>
+                <td>{{ supplier.name }}</td>
+                <td>{{ supplier.contact or 'N/A' }}</td>
+                <td>
+                    <span class="badge bg-{{ 'danger' if supplier.balance > 0 else 'success' if supplier.balance < 0 else 'secondary' }}">
+                        ${{ "%.2f"|format(supplier.balance) }}
+                    </span>
+                </td>
+                <td>{{ supplier.total_purchases }}</td>
+                <td class="d-flex gap-1 flex-wrap">
+                    {% if supplier.balance > 0 %}
+                    <a href="{{ url_for('new_payment', supplier_id=supplier.id) }}" class="btn btn-sm btn-warning">Pay</a>
+                    {% endif %}
+                    <a href="{{ url_for('new_purchase') }}?supplier_id={{ supplier.id }}" class="btn btn-sm btn-primary">Purchase</a>
+                    <a href="{{ url_for('edit_supplier', supplier_id=supplier.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    No suppliers found. <a href="{{ url_for('new_supplier') }}">Add your first supplier</a>
+</div>
+{% endif %}
+{% endblock %}

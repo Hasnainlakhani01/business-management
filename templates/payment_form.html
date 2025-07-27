@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Make Payment - Business Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>Make Payment to {{ supplier.name }}</h5>
+                <small class="text-muted">Current Balance: ${{ "%.2f"|format(supplier.balance) }}</small>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('create_payment') }}" method="POST">
+                    <input type="hidden" name="supplier_id" value="{{ supplier.id }}">
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="date" class="form-label">Date *</label>
+                                <input type="date" class="form-control" id="date" name="date" value="{{ date.today() }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="amount" class="form-label">Amount *</label>
+                                <input type="number" step="0.01" class="form-control" id="amount" name="amount" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="payment_mode" class="form-label">Payment Mode *</label>
+                                <select class="form-control" id="payment_mode" name="payment_mode" required>
+                                    <option value="">Select Mode</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="bank">Bank Transfer</option>
+                                    <option value="cheque">Cheque</option>
+                                    <option value="upi">UPI</option>
+                                    <option value="card">Card</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="reference_no" class="form-label">Reference No</label>
+                                <input type="text" class="form-control" id="reference_no" name="reference_no">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if outstanding_purchases %}
+                    <div class="mb-3">
+                        <label for="purchase_id" class="form-label">Against Purchase (Optional)</label>
+                        <select class="form-control" id="purchase_id" name="purchase_id">
+                            <option value="">Advance Payment</option>
+                            {% for purchase in outstanding_purchases %}
+                            <option value="{{ purchase.id }}">
+                                {{ purchase.bill_no or 'No Bill' }} - Outstanding: ${{ "%.2f"|format(purchase.outstanding) }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('suppliers') }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Make Payment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
