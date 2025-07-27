@@ -6,3 +6,4 @@ click>=8.1.0
 pysqlite3-binary; python_version < '3.11'
 loguru>=0.7.0
 python-dotenv>=1.0.0
+gunicorn==21.2.0
